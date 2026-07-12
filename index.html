@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDN Graphic & Printing - Business Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-logo">
+                <div class="logo-icon"><i class="fas fa-palette"></i></div>
+                <h1 data-en="UDN Graphic & Printing" data-si="UDN Graphic & Printing">UDN Graphic & Printing</h1>
+                <p data-en="Business Management System" data-si="Business Management System">Business Management System</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label data-en="Username" data-si="Username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Password" data-si="Password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="Enter password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="loginError" class="error-message" style="display:none;"></div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span data-en="Login" data-si="Login">Login</span>
+                </button>
+            </form>
+            <div class="login-footer"><p>&copy; 2026 UDN Graphic & Printing</p></div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="main-app" style="display:none;">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-palette"></i>
+                    <span class="logo-text">UDN</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span data-en="Dashboard" data-si="Dashboard">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('income')">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span data-en="Income" data-si="Income">Income</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('expenses')">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span data-en="Expenses" data-si="Expenses">Expenses</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('services')">
+                    <i class="fas fa-list"></i>
+                    <span data-en="Services" data-si="Services">Services</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('products')">
+                    <i class="fas fa-box"></i>
+                    <span data-en="Products" data-si="Products">Products</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('reports')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span data-en="Reports" data-si="Reports">Reports</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span data-en="Settings" data-si="Settings">Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span data-en="Logout" data-si="Logout">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h2 id="pageTitle" data-en="Dashboard" data-si="Dashboard">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <button class="lang-toggle" onclick="toggleLanguage()">
+                        <i class="fas fa-globe"></i>
+                        <span id="langText">EN</span>
+                    </button>
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <section id="dashboard" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card balance">
+                        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <h3 data-en="Current Balance" data-si="Current Balance">Current Balance</h3>
+                            <p class="stat-value" id="currentBalance">Rs. 0.00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card income">
+                        <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+                        <div class="stat-info">
+                            <h3 data-en="Total Income" data-si="Total Income">Total Income</h3>
+                            <p class="stat-value" id="totalIncome">Rs. 0.00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card expense">
+                        <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
+                        <div class="stat-info">
+                            <h3 data-en="Total Expenses" data-si="Total Expenses">Total Expenses</h3>
+                            <p class="stat-value" id="totalExpenses">Rs. 0.00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card profit">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="stat-info">
+                            <h3 data-en="Total Profit" data-si="Total Profit">Total Profit</h3>
+                            <p class="stat-value" id="totalProfit">Rs. 0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="chart-card">
+                        <h3 data-en="Income vs Expense" data-si="Income vs Expense">Income vs Expense</h3>
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3 data-en="Product Purchases" data-si="Product Purchases">Product Purchases</h3>
+                        <canvas id="productChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="recent-activities">
+                    <div class="activity-card">
+                        <h3 data-en="Latest Jobs" data-si="Latest Jobs">Latest Jobs</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-en="Date" data-si="Date">Date</th>
+                                        <th data-en="Customer" data-si="Customer">Customer</th>
+                                        <th data-en="Service" data-si="Service">Service</th>
+                                        <th data-en="Amount" data-si="Amount">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="latestJobsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="activity-card">
+                        <h3 data-en="Latest Purchases" data-si="Latest Purchases">Latest Purchases</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-en="Date" data-si="Date">Date</th>
+                                        <th data-en="Product" data-si="Product">Product</th>
+                                        <th data-en="Quantity" data-si="Quantity">Quantity</th>
+                                        <th data-en="Amount" data-si="Amount">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="latestPurchasesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="income" class="content-section">
+                <div class="section-header">
+                    <button class="btn-primary" onclick="openModal('incomeModal')">
+                        <i class="fas fa-plus"></i>
+                        <span data-en="Add Income" data-si="Add Income">Add Income</span>
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="incomeSearch" placeholder="Search..." onkeyup="searchTable('incomeTable', this.value)">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="incomeTable">
+                        <thead>
+                            <tr>
+                                <th data-en="Date" data-si="Date">Date</th>
+                                <th data-en="Customer" data-si="Customer">Customer</th>
+                                <th data-en="Service" data-si="Service">Service</th>
+                                <th data-en="Quantity" data-si="Quantity">Quantity</th>
+                                <th data-en="Price" data-si="Price">Price</th>
+                                <th data-en="Total" data-si="Total">Total</th>
+                                <th data-en="Actions" data-si="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="expenses" class="content-section">
+                <div class="section-header">
+                    <button class="btn-primary" onclick="openModal('expenseModal')">
+                        <i class="fas fa-plus"></i>
+                        <span data-en="Add Expense" data-si="Add Expense">Add Expense</span>
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="expenseSearch" placeholder="Search..." onkeyup="searchTable('expenseTable', this.value)">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="expenseTable">
+                        <thead>
+                            <tr>
+                                <th data-en="Date" data-si="Date">Date</th>
+                                <th data-en="Product" data-si="Product">Product</th>
+                                <th data-en="Quantity" data-si="Quantity">Quantity</th>
+                                <th data-en="Unit Price" data-si="Unit Price">Unit Price</th>
+                                <th data-en="Total" data-si="Total">Total</th>
+                                <th data-en="Supplier" data-si="Supplier">Supplier</th>
+                                <th data-en="Bill" data-si="Bill">Bill</th>
+                                <th data-en="Actions" data-si="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="services" class="content-section">
+                <div class="section-header">
+                    <button class="btn-primary" onclick="openModal('serviceModal')">
+                        <i class="fas fa-plus"></i>
+                        <span data-en="Add Service" data-si="Add Service">Add Service</span>
+                    </button>
+                </div>
+                <div class="services-grid" id="servicesGrid"></div>
+            </section>
+
+            <section id="products" class="content-section">
+                <div class="section-header">
+                    <button class="btn-primary" onclick="openModal('productModal')">
+                        <i class="fas fa-plus"></i>
+                        <span data-en="Add Product" data-si="Add Product">Add Product</span>
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="productTable">
+                        <thead>
+                            <tr>
+                                <th data-en="Product Name" data-si="Product Name">Product Name</th>
+                                <th data-en="Unit Price" data-si="Unit Price">Unit Price</th>
+                                <th data-en="Actions" data-si="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="reports" class="content-section">
+                <div class="report-filters">
+                    <div class="form-group">
+                        <label data-en="From Date" data-si="From Date">From Date</label>
+                        <input type="date" id="reportFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="To Date" data-si="To Date">To Date</label>
+                        <input type="date" id="reportToDate">
+                    </div>
+                    <button class="btn-primary" onclick="generateReport()">
+                        <i class="fas fa-chart-line"></i>
+                        <span data-en="Generate Report" data-si="Generate Report">Generate Report</span>
+                    </button>
+                    <button class="btn-secondary" onclick="exportReportExcel()">
+                        <i class="fas fa-file-excel"></i>
+                        <span data-en="Export Excel" data-si="Export Excel">Export Excel</span>
+                    </button>
+                    <button class="btn-secondary" onclick="exportReportPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        <span data-en="Export PDF" data-si="Export PDF">Export PDF</span>
+                    </button>
+                </div>
+                <div class="report-summary" id="reportSummary" style="display:none;">
+                    <div class="report-cards">
+                        <div class="report-card income">
+                            <h4 data-en="Total Income" data-si="Total Income">Total Income</h4>
+                            <p id="reportIncome">Rs. 0.00</p>
+                        </div>
+                        <div class="report-card expense">
+                            <h4 data-en="Total Expenses" data-si="Total Expenses">Total Expenses</h4>
+                            <p id="reportExpenses">Rs. 0.00</p>
+                        </div>
+                        <div class="report-card profit">
+                            <h4 data-en="Profit" data-si="Profit">Profit</h4>
+                            <p id="reportProfit">Rs. 0.00</p>
+                        </div>
+                    </div>
+                    <div class="report-charts">
+                        <div class="chart-card">
+                            <canvas id="reportPieChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="reportProductChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="report-tables">
+                        <div class="table-responsive">
+                            <h4 data-en="Income Details" data-si="Income Details">Income Details</h4>
+                            <table class="data-table" id="reportIncomeTable">
+                                <thead>
+                                    <tr>
+                                        <th data-en="Date" data-si="Date">Date</th>
+                                        <th data-en="Customer" data-si="Customer">Customer</th>
+                                        <th data-en="Service" data-si="Service">Service</th>
+                                        <th data-en="Amount" data-si="Amount">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportIncomeTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="table-responsive">
+                            <h4 data-en="Expense Details" data-si="Expense Details">Expense Details</h4>
+                            <table class="data-table" id="reportExpenseTable">
+                                <thead>
+                                    <tr>
+                                        <th data-en="Date" data-si="Date">Date</th>
+                                        <th data-en="Product" data-si="Product">Product</th>
+                                        <th data-en="Quantity" data-si="Quantity">Quantity</th>
+                                        <th data-en="Total" data-si="Total">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportExpenseTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings" class="content-section">
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3 data-en="Business Logo" data-si="Business Logo">Business Logo</h3>
+                        <div class="logo-preview" id="logoPreview">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <input type="file" id="logoUpload" accept="image/*" onchange="uploadLogo(this)">
+                        <label for="logoUpload" class="btn-secondary">
+                            <i class="fas fa-upload"></i>
+                            <span data-en="Upload Logo" data-si="Upload Logo">Upload Logo</span>
+                        </label>
+                    </div>
+                    <div class="settings-card">
+                        <h3 data-en="Initial Balance" data-si="Initial Balance">Initial Balance</h3>
+                        <div class="form-group">
+                            <label data-en="Starting Balance (Rs.)" data-si="Starting Balance (Rs.)">Starting Balance (Rs.)</label>
+                            <input type="number" id="startingBalance" placeholder="0.00" step="0.01">
+                        </div>
+                        <button class="btn-primary" onclick="saveStartingBalance()">
+                            <i class="fas fa-save"></i>
+                            <span data-en="Save Balance" data-si="Save Balance">Save Balance</span>
+                        </button>
+                    </div>
+                    <div class="settings-card">
+                        <h3 data-en="Data Management" data-si="Data Management">Data Management</h3>
+                        <button class="btn-secondary" onclick="exportAllData()">
+                            <i class="fas fa-download"></i>
+                            <span data-en="Export All Data" data-si="Export All Data">Export All Data</span>
+                        </button>
+                        <button class="btn-danger" onclick="clearAllData()">
+                            <i class="fas fa-trash"></i>
+                            <span data-en="Clear All Data" data-si="Clear All Data">Clear All Data</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="incomeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-en="Add Income" data-si="Add Income">Add Income</h3>
+                <button class="modal-close" onclick="closeModal('incomeModal')">&times;</button>
+            </div>
+            <form id="incomeForm" onsubmit="saveIncome(event)">
+                <div class="form-group">
+                    <label data-en="Date" data-si="Date">Date <span class="required">*</span></label>
+                    <input type="date" id="incomeDate" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Customer Name" data-si="Customer Name">Customer Name <span class="required">*</span></label>
+                    <input type="text" id="incomeCustomer" placeholder="Enter customer name" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Service" data-si="Service">Service <span class="required">*</span></label>
+                    <select id="incomeService" required onchange="updateIncomePrice()">
+                        <option value="" data-en="Select Service" data-si="Select Service">Select Service</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-en="Quantity" data-si="Quantity">Quantity <span class="required">*</span></label>
+                    <input type="number" id="incomeQuantity" min="1" value="1" required onchange="calculateIncomeTotal()">
+                </div>
+                <div class="form-group">
+                    <label data-en="Price per Unit (Rs.)" data-si="Price per Unit (Rs.)">Price per Unit (Rs.) <span class="required">*</span></label>
+                    <input type="number" id="incomePrice" min="0" step="0.01" required onchange="calculateIncomeTotal()">
+                </div>
+                <div class="form-group">
+                    <label data-en="Total Amount (Rs.)" data-si="Total Amount (Rs.)">Total Amount (Rs.)</label>
+                    <input type="text" id="incomeTotal" readonly class="readonly">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('incomeModal')" data-en="Cancel" data-si="Cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span data-en="Save" data-si="Save">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="expenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-en="Add Expense" data-si="Add Expense">Add Expense</h3>
+                <button class="modal-close" onclick="closeModal('expenseModal')">&times;</button>
+            </div>
+            <form id="expenseForm" onsubmit="saveExpense(event)">
+                <div class="form-group">
+                    <label data-en="Date" data-si="Date">Date <span class="required">*</span></label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Product" data-si="Product">Product <span class="required">*</span></label>
+                    <select id="expenseProduct" required onchange="updateExpensePrice()">
+                        <option value="" data-en="Select Product" data-si="Select Product">Select Product</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-en="Quantity" data-si="Quantity">Quantity <span class="required">*</span></label>
+                    <input type="number" id="expenseQuantity" min="1" value="1" required onchange="calculateExpenseTotal()">
+                </div>
+                <div class="form-group">
+                    <label data-en="Unit Price (Rs.)" data-si="Unit Price (Rs.)">Unit Price (Rs.) <span class="required">*</span></label>
+                    <input type="number" id="expenseUnitPrice" min="0" step="0.01" required onchange="calculateExpenseTotal()">
+                </div>
+                <div class="form-group">
+                    <label data-en="Total Price (Rs.)" data-si="Total Price (Rs.)">Total Price (Rs.)</label>
+                    <input type="text" id="expenseTotal" readonly class="readonly">
+                </div>
+                <div class="form-group">
+                    <label data-en="Supplier Name" data-si="Supplier Name">Supplier Name</label>
+                    <input type="text" id="expenseSupplier" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label data-en="Upload Bill" data-si="Upload Bill">Upload Bill</label>
+                    <input type="file" id="expenseBill" accept="image/*,.pdf">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('expenseModal')" data-en="Cancel" data-si="Cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span data-en="Save" data-si="Save">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="serviceModalTitle" data-en="Add Service" data-si="Add Service">Add Service</h3>
+                <button class="modal-close" onclick="closeModal('serviceModal')">&times;</button>
+            </div>
+            <form id="serviceForm" onsubmit="saveService(event)">
+                <input type="hidden" id="serviceId">
+                <div class="form-group">
+                    <label data-en="Service Name" data-si="Service Name">Service Name <span class="required">*</span></label>
+                    <input type="text" id="serviceName" placeholder="Enter service name" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Price (Rs.)" data-si="Price (Rs.)">Price (Rs.) <span class="required">*</span></label>
+                    <input type="number" id="servicePrice" min="0" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Description" data-si="Description">Description</label>
+                    <textarea id="serviceDescription" rows="3" placeholder="Enter description"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('serviceModal')" data-en="Cancel" data-si="Cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span data-en="Save" data-si="Save">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="productModalTitle" data-en="Add Product" data-si="Add Product">Add Product</h3>
+                <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label data-en="Product Name" data-si="Product Name">Product Name <span class="required">*</span></label>
+                    <input type="text" id="productName" placeholder="Enter product name" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Unit Price (Rs.)" data-si="Unit Price (Rs.)">Unit Price (Rs.) <span class="required">*</span></label>
+                    <input type="number" id="productPrice" min="0" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('productModal')" data-en="Cancel" data-si="Cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span data-en="Save" data-si="Save">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
